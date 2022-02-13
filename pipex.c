@@ -156,7 +156,7 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 
 	i = 0;
 	j = 0;
-	if (!haystack && !len)
+	if (!haystack)
 		return (NULL);
 	if (*needle == '\0')
 		return ((char *)haystack);
@@ -233,16 +233,20 @@ int	main(int ac, char **av, char **envp)
 		dup2(fd, 0);
 		dup2(f1[1], 1);
 		ft_close(fd, f1[0], f1[1]);
-		command1 = ft_split(av[2], ' ');;
+		command1 = ft_split(av[2], ' ');
 		s = get_it(command1[0], envp);
 		execve(s, command1, envp);
 	}
-	waitpid(i, NULL, 0);
-	fd = open(av[4], 2 | O_CREAT);
+	wait(NULL);
+	fd = open(av[4], 1 | O_CREAT | O_TRUNC,0777);
 	dup2(fd, 1);
 	dup2(f1[0], 0);
 	ft_close(fd, f1[0], f1[1]);
 	command1 = ft_split(av[3], ' ');
 	s = get_it(command1[0], envp);
 	execve(s, command1, envp);
+	// /usr/bin/bash
+	// "bash", "-c", "grep :",NULL
+	// printf("%d\n", f1[0]);
+	// printf("%d\n", f1[1]);
 }
