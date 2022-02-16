@@ -1,2 +1,0 @@
-PATH=/Users/ted-dafi/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Users/ted-dafi/.brew/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/:/Applications/Visual Studio Code.app/Contents/Resources/app/bin/
-__CF_USER_TEXT_ENCODING=0x109A:0x0:0x0
