@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 16:11:06 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/15 16:14:38 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:12:36 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,4 +16,10 @@ void	ft_dup2(int f1, int f2)
 {
 	dup2(f1, 0);
 	dup2(f2, 1);
+}
+
+void	nocommand(void)
+{
+	write(2, "Command not found\n", 19);
+	exit(0);
 }

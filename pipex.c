@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:10:46 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/16 19:50:03 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:12:32 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,26 +72,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (s3);
 }
 
-void	get_and_do(char *command, char **envp)
-{
-	char	**parts;
-	char	*excutable;
-
-	parts = ft_split(command, ' ');
-	excutable = get_path(parts[0], envp);
-	if (!excutable)
-	{
-		write(2,"Command not found",18);
-		exit(0);
-	}
-	execve(excutable, parts, envp);
-}
-void	nocommand(void)
-{
-	write(2,"Command not found\n",19);
-	exit(0);
-}
-
 void	dealwithit(char **av, char **envp, int flag, int *p)
 {
 	char		*excutable;
@@ -129,19 +109,19 @@ int	main(int ac, char **av, char **envp)
 	if (ac != 5)
 		return (write(2, "Error, enter required elements only\n", 37));
 	if (pipe(p) < 0)
-		return (write(2, "Error, Pipes \?\?\n", 17));	
+		return (write(2, "Error, Pipes \?\?\n", 17));
 	proc[0] = fork();
-	if(proc[0] == -1)
+	if (proc[0] == -1)
 		return (write(2, "Error, couldn't create the proccess\n", 37));
 	if (proc[0] == 0)
 	{
 		fd = open(av[1], 0);
 		if (fd == -1)
-			return (write(2, "Error, No such a file or directory\n",36));
+			return (write(2, "Error, No such a file or directory\n", 36));
 		dealwithit(av, envp, fd, p);
 	}
 	proc[1] = fork();
-	if(proc[1] == -1)
+	if (proc[1] == -1)
 		return (write(2, "Error, couldn't create the proccess\n", 37));
 	if (proc[1] == 0)
 		dealwithit(av, envp, -1, p);
