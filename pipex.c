@@ -6,12 +6,12 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:10:46 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/16 13:51:00 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/02/16 19:50:03 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include <errno.h>
+
 char	*ft_strnstr(char *haystack, char *needle, size_t len)
 {
 	size_t	i;
@@ -86,37 +86,64 @@ void	get_and_do(char *command, char **envp)
 	}
 	execve(excutable, parts, envp);
 }
+void	nocommand(void)
+{
+	write(2,"Command not found\n",19);
+	exit(0);
+}
+
+void	dealwithit(char **av, char **envp, int flag, int *p)
+{
+	char		*excutable;
+	char		**parts;
+
+	if (flag > 0)
+	{
+		ft_dup2(flag, p[1]);
+		ft_close(flag, p[1], p[0]);
+		parts = ft_split(av[2], ' ');
+		excutable = get_path(parts[0], envp);
+		if (!excutable)
+			nocommand();
+		execve(excutable, parts, envp);
+	}
+	else
+	{
+		parts = ft_split(av[3], ' ');
+		excutable = get_path(parts[0], envp);
+		if (!excutable)
+			nocommand();
+		flag = open(av[4], 1 | O_CREAT | O_TRUNC, 0777);
+		ft_dup2(p[0], flag);
+		ft_close(flag, p[0], p[1]);
+		execve(excutable, parts, envp);
+	}
+}
 
 int	main(int ac, char **av, char **envp)
 {
-	int		f1[2];
-	int		i;
-	int		k;
-	int		fd;
+	int	p[2];
+	int	proc[2];
+	int	fd;
 
 	if (ac != 5)
-		return (write(2, "error, enter required elements only", 36));
-	if (pipe(f1) < 0)
-		return (write(1, "error, pipes \?\?!", 17));
-	i = fork();
-	if (i == -1)
-		return (write(2, "couldn't create proccess", 25));
-	if (i == 0)
+		return (write(2, "Error, enter required elements only\n", 37));
+	if (pipe(p) < 0)
+		return (write(2, "Error, Pipes \?\?\n", 17));	
+	proc[0] = fork();
+	if(proc[0] == -1)
+		return (write(2, "Error, couldn't create the proccess\n", 37));
+	if (proc[0] == 0)
 	{
 		fd = open(av[1], 0);
-		if (fd < 0)
-			return (write(2, "error no such a file or directory\n", 35));
-		ft_dup2(fd, f1[1]);
-		ft_close(fd, f1[0], f1[1]);
-		get_and_do(av[2], envp);
+		if (fd == -1)
+			return (write(2, "Error, No such a file or directory\n",36));
+		dealwithit(av, envp, fd, p);
 	}
-	k = fork();
-	if (k == 0)
-	{
-		fd = open(av[4], 1 | O_CREAT | O_TRUNC, 0777);
-		ft_dup2(f1[0], fd);
-		ft_close(fd, f1[0], f1[1]);
-		get_and_do(av[3], envp);
-	}
+	proc[1] = fork();
+	if(proc[1] == -1)
+		return (write(2, "Error, couldn't create the proccess\n", 37));
+	if (proc[1] == 0)
+		dealwithit(av, envp, -1, p);
 	wait(NULL);
 }
