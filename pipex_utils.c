@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:09:36 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/15 14:19:02 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/02/17 14:19:58 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ char	*what_valid(char **all, char *command)
 {
 	char	*s;
 	char	*temp;
-
+	if (!access(command, X_OK))
+		return (command);
 	while (*all)
 	{
 		s = ft_strjoin(*all, "/");
