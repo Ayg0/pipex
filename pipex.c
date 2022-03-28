@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:10:46 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/17 10:12:32 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/03/25 17:09:44 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,30 +100,30 @@ void	dealwithit(char **av, char **envp, int flag, int *p)
 	}
 }
 
-int	main(int ac, char **av, char **envp)
-{
-	int	p[2];
-	int	proc[2];
-	int	fd;
+// int	main(int ac, char **av, char **envp)
+// {
+// 	int	p[2];
+// 	int	proc[2];
+// 	int	fd;
 
-	if (ac != 5)
-		return (write(2, "Error, enter required elements only\n", 37));
-	if (pipe(p) < 0)
-		return (write(2, "Error, Pipes \?\?\n", 17));
-	proc[0] = fork();
-	if (proc[0] == -1)
-		return (write(2, "Error, couldn't create the proccess\n", 37));
-	if (proc[0] == 0)
-	{
-		fd = open(av[1], 0);
-		if (fd == -1)
-			return (write(2, "Error, No such a file or directory\n", 36));
-		dealwithit(av, envp, fd, p);
-	}
-	proc[1] = fork();
-	if (proc[1] == -1)
-		return (write(2, "Error, couldn't create the proccess\n", 37));
-	if (proc[1] == 0)
-		dealwithit(av, envp, -1, p);
-	wait(NULL);
-}
+// 	if (ac != 5)
+// 		return (write(2, "Error, enter required elements only\n", 37));
+// 	if (pipe(p) < 0)
+// 		return (write(2, "Error, Pipes \?\?\n", 17));
+// 	proc[0] = fork();
+// 	if (proc[0] == -1)
+// 		return (write(2, "Error, couldn't create the proccess\n", 37));
+// 	if (proc[0] == 0)
+// 	{
+// 		fd = open(av[1], 0);
+// 		if (fd == -1)
+// 			return (write(2, "Error, No such a file or directory\n", 36));
+// 		dealwithit(av, envp, fd, p);
+// 	}
+// 	proc[1] = fork();
+// 	if (proc[1] == -1)
+// 		return (write(2, "Error, couldn't create the proccess\n", 37));
+// 	if (proc[1] == 0)
+// 		dealwithit(av, envp, -1, p);
+// 	wait(NULL);
+// }
