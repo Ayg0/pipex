@@ -5,76 +5,115 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/21 09:46:08 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/03/28 10:33:21 by ted-dafi         ###   ########.fr       */
+/*   Created: 2022/03/30 09:59:54 by ted-dafi          #+#    #+#             */
+/*   Updated: 2022/03/30 16:12:30 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_init(t_data *data, int ac)
+void	ft_error(int errnum)
+{
+	exit(errnum);	
+}
+
+void	ft_init(int ac, t_data *data)
 {
 	int	i;
 
 	i = 0;
-	data->proc = ft_calloc(     ac - 2, sizeof(int));
-	data->pipes = ft_calloc(ac - 2, sizeof(int *));
+	data->pipes = (int **)ft_calloc(ac - 2, sizeof(int *));
+	data->proc = (int *)ft_calloc(ac - 2, sizeof(int));
 	while (i < ac - 3)
 	{
-		data->pipes[i] = ft_calloc(2, sizeof(int));
-		pipe(data->pipes[i++]);
+		data->pipes[i] = (int *)ft_calloc(2, sizeof(int));
+		if (pipe(data->pipes[i++]) != 0)
+			ft_error(1);
 	}
+	// khadmat lm3agiz open o clozi hna;
 }
 
-void	close_it(int fd, t_data *data, int ac)
+void	switch_in_out(int ac, int i, t_data *data, char **av)
 {
-	int	i;
-
-	i = 0;
-	while(i < ac - 3)
-	{
-		close(data->pipes[i][0]);
-		close(data->pipes[i][1]);
-		i++;
-	}
-	if (fd >= 0)
-		close(fd);
-}
-
-void	in_out(int i, t_data *data, char **av, int ac)
-{
-	int	j;
-
+	int fd;
 	if (i == 0)
 	{
-		j = open(av[1], 0);
-		if (j < 0)
-			exit(write(2,"well, something is wrong.", 8));
-		dup2(j, 0);
-		dup2(data->pipes[i + 1][0], 1);
-		
-		//close_it(j, data, ac);
+		fd = open(av[1], 0);
+		if (fd == -1)
+			exit(write(2, "Error, No such a file or directory\n", 36));
+		dup2(fd, 0);
+		dup2(data->pipes[0][1], 1);
+		close(data->pipes[0][0]);
+	}
+	else if (i == ac - 4)
+	{
+		fd = open(av[ac - 1], 1 | O_TRUNC | O_CREAT, 0644);
+		if (fd == -1)
+		{
+			perror("khoxkhox");
+			exit(0);
+		}
+		dup2(fd, 1);
+ 		dup2(data->pipes[i - 1][0], 0);
+		close(data->pipes[i - 1][1]);
 	}
 	else
 	{
-		j = open(av[ac - 1], 1 | O_CREAT | O_TRUNC, 0644);
-		if (j < 0)
-			exit(write(2,"Well, something is wrong.", 8));
-		dup2(j, 1);
-		dup2(data->pipes[i][1], 0);
-		//char b[1];
-		//read(data->pipes[i][1], b, 1);
-		//write(2, b, 1);
-		//close_it(j, data, ac);
+		dup2(data->pipes[i - 1][0], 0);
+		dup2(data->pipes[i][1], 1);
+		close(data->pipes[i][0]);
+		close(data->pipes[i - 1][1]);
 	}
+}
+
+void	my_free(t_data *data, int ac)
+{
+	int i;
+
+	i = 0;
+	while (i < ac - 2)
+		free(data->pipes[i++]);
+	free(data->pipes);
+	free(data->proc);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	int	i;
 	t_data	data;
-	char		*excutable;
-	char		**parts;
+	char	*excutable;
+	char	**parts;
+	int		i;
+	int		j;
 
 	i = 0;
+	ft_init(ac, &data);
+	while (i < ac - 3)
+	{
+		data.proc[i] = fork();
+		if (!data.proc[i])
+		{
+			switch_in_out(ac, i, &data, av);
+			parts = ft_split(av[i + 2], ' ');
+			excutable = get_path(parts[0], envp);
+			if (!excutable)
+				nocommand();
+			execve(excutable, parts, envp);
+		}
+		j = 0;
+		while (j < i)
+		{
+			close(data.pipes[j][1]);
+			close(data.pipes[j][0]);
+			j++;
+		}
+		i++;
+	}
+	while (i > 0)
+	{
+		wait(NULL);
+		i--;
+	}
+	my_free(&data, ac);
 }
+
+// ./pipex file1 cmd1 cmd2 file2

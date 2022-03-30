@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:10:46 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/03/25 17:09:44 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:53:23 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	dealwithit(char **av, char **envp, int flag, int *p)
 		excutable = get_path(parts[0], envp);
 		if (!excutable)
 			nocommand();
-		flag = open(av[4], 1 | O_CREAT | O_TRUNC, 0777);
+		flag = open(av[4], 1 | O_CREAT | O_TRUNC, 0644);
 		ft_dup2(p[0], flag);
 		ft_close(flag, p[0], p[1]);
 		execve(excutable, parts, envp);
