@@ -6,114 +6,75 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 09:59:54 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/03/30 16:12:30 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/04 13:25:03 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_error(int errnum)
-{
-	exit(errnum);	
-}
-
-void	ft_init(int ac, t_data *data)
+void	free_it(t_data *data, int ac)
 {
 	int	i;
-
-	i = 0;
-	data->pipes = (int **)ft_calloc(ac - 2, sizeof(int *));
-	data->proc = (int *)ft_calloc(ac - 2, sizeof(int));
-	while (i < ac - 3)
-	{
-		data->pipes[i] = (int *)ft_calloc(2, sizeof(int));
-		if (pipe(data->pipes[i++]) != 0)
-			ft_error(1);
-	}
-	// khadmat lm3agiz open o clozi hna;
-}
-
-void	switch_in_out(int ac, int i, t_data *data, char **av)
-{
-	int fd;
-	if (i == 0)
-	{
-		fd = open(av[1], 0);
-		if (fd == -1)
-			exit(write(2, "Error, No such a file or directory\n", 36));
-		dup2(fd, 0);
-		dup2(data->pipes[0][1], 1);
-		close(data->pipes[0][0]);
-	}
-	else if (i == ac - 4)
-	{
-		fd = open(av[ac - 1], 1 | O_TRUNC | O_CREAT, 0644);
-		if (fd == -1)
-		{
-			perror("khoxkhox");
-			exit(0);
-		}
-		dup2(fd, 1);
- 		dup2(data->pipes[i - 1][0], 0);
-		close(data->pipes[i - 1][1]);
-	}
-	else
-	{
-		dup2(data->pipes[i - 1][0], 0);
-		dup2(data->pipes[i][1], 1);
-		close(data->pipes[i][0]);
-		close(data->pipes[i - 1][1]);
-	}
-}
-
-void	my_free(t_data *data, int ac)
-{
-	int i;
 
 	i = 0;
 	while (i < ac - 2)
 		free(data->pipes[i++]);
 	free(data->pipes);
-	free(data->proc);
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
+}
+
+void	get_data(char **av, int temp)
+{
+	char	*s;
+	int		re;
+	char	*i[3];
+
+	re = 1;
+	i[2] = ft_strjoin2(av[2], "\n", 0);
+	while (re)
+	{
+		s = get_next_line(0, 7);
+		re = ft_strcmp(s, i[2]);
+		re && write(temp, s, ft_strlen(s));
+		free(s);
+	}
+}
+
+int	using_here_doc(int ac, char **av, char **envp)
+{
+	int		temp;
+	t_data	all;
+
+	temp = open(".hello_temp_herdoc", 1 | O_CREAT | O_TRUNC, 0644);
+	get_data(av, temp);
+	close(temp);
+	av[2] = ft_strdup(".hello_temp_herdoc");
+	ft_init(ac - 1, &all, O_APPEND);
+	multiprocessing(&all, ac - 1, av + 1, envp);
+	free(av[2]);
+	unlink(".hello_temp_herdoc");
+	return (0);
 }
 
 int	main(int ac, char **av, char **envp)
 {
-	t_data	data;
-	char	*excutable;
-	char	**parts;
-	int		i;
-	int		j;
+	t_data	all_data;
 
-	i = 0;
-	ft_init(ac, &data);
-	while (i < ac - 3)
-	{
-		data.proc[i] = fork();
-		if (!data.proc[i])
-		{
-			switch_in_out(ac, i, &data, av);
-			parts = ft_split(av[i + 2], ' ');
-			excutable = get_path(parts[0], envp);
-			if (!excutable)
-				nocommand();
-			execve(excutable, parts, envp);
-		}
-		j = 0;
-		while (j < i)
-		{
-			close(data.pipes[j][1]);
-			close(data.pipes[j][0]);
-			j++;
-		}
-		i++;
-	}
-	while (i > 0)
-	{
-		wait(NULL);
-		i--;
-	}
-	my_free(&data, ac);
+	ft_init(ac, &all_data, O_TRUNC);
+	if (!ft_strcmp("here_doc", av[1]))
+		using_here_doc(ac, av, envp);
+	else
+		multiprocessing(&all_data, ac, av, envp);
+	return (0);
 }
 
 // ./pipex file1 cmd1 cmd2 file2

@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 14:09:36 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/02/17 14:19:58 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/04 13:09:05 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,13 @@ void	*ft_calloc(size_t count, size_t size)
 char	*what_valid(char **all, char *command)
 {
 	char	*s;
-	char	*temp;
+
 	if (!access(command, X_OK))
 		return (command);
 	while (*all)
 	{
-		s = ft_strjoin(*all, "/");
-		temp = s;
-		s = ft_strjoin(s, command);
-		free(temp);
+		s = ft_strjoin2(*all, "/", 1);
+		s = ft_strjoin2(s, command, 0);
 		if (!access(s, X_OK))
 			return (s);
 		free(s);
@@ -75,7 +73,7 @@ size_t	ft_strlcpy(char *dest, char *src, size_t size)
 
 void	ft_close(int a, int b, int c)
 {
-	close(a);
+	a > 0 && close(a);
 	close(b);
 	close(c);
 }

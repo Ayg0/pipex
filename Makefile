@@ -1,10 +1,12 @@
-CC = gcc
+CC = cc
 NAME = pipex
 
 
-CFLAGS = # -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra -g
 
-SRCS = pipex.c pipex_utils.c pipex_utils2.c ft_split.c pipex_bonus.c
+SRCS = pipex.c pipex_utils.c pipex_utils2.c ft_split.c pipex_bonus.c\
+		 GNL/get_next_line.c GNL/get_next_line_utils.c\
+		 multi_pipes.c
 
 OBJS = ${SRCS:.c=.o}
 
