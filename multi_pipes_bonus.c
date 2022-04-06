@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 13:15:26 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/04 13:36:16 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/06 11:25:54 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,12 @@ void	multiprocessing(t_data *data, int ac, char **av, char **envp)
 	free_it(data, ac);
 }
 
-void	ft_error(int ac, t_data *data, int errnum)
+void	ft_error(int ac, t_data *data, int errnum, char *error)
 {
+	if (error)
+		write(2, error, ft_strlen(error));
 	free_it(data, ac);
-	exit(errnum);	
+	exit(errnum);
 }
 
 void	switch_in_out(int ac, int i, t_data *data, char **av)
@@ -92,7 +94,7 @@ void	switch_in_out(int ac, int i, t_data *data, char **av)
 	{
 		fd = open(av[ac - 1], 1 | data->mode | O_CREAT, 0644);
 		if (fd == -1)
-			ft_error(ac, data, 7);
+			ft_error(ac, data, 7, "Error: opening the file/permission\n");
 		ft_dup2(data->pipes[i - 1][0], fd);
 		close(data->pipes[i - 1][1]);
 	}
@@ -114,6 +116,6 @@ void	ft_init(int ac, t_data *data, int mode)
 	{
 		data->pipes[i] = (int *)ft_calloc(2, sizeof(int));
 		if (pipe(data->pipes[i++]) != 0)
-			ft_error(ac, data, 1);
+			ft_error(ac, data, 1, "error creating pipes ");
 	}
 }

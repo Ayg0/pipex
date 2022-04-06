@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils2.c                                     :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/15 16:11:06 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/02 11:42:24 by ted-dafi         ###   ########.fr       */
+/*   Created: 2021/11/28 20:31:20 by ted-dafi          #+#    #+#             */
+/*   Updated: 2022/04/01 18:55:51 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
+# include <stdlib.h>
+# include <unistd.h>
+# include "../pipex.h"
 
-void	ft_dup2(int f1, int f2)
-{
-	dup2(f1, 0);
-	dup2(f2, 1);
-}
-
-int	nocommand(void)
-{
-	write(2, "Command not found\n", 19);
-	exit(0);
-}
+char	*ft_strjoin(char **s1, char *s2);
+int		ft_newlchr(const char *s);
+void	*ft_calloc(size_t count, size_t size);
+char	*ft_strdup(char *s1);
+char	*get_next_line(int fd, int size);
+char	*my_free(char **buff, char **temp, int flag);
+#endif

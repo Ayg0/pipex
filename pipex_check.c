@@ -1,39 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*   pipex_check.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/15 14:09:36 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/04 13:09:05 by ted-dafi         ###   ########.fr       */
+/*   Created: 2022/02/15 16:11:06 by ted-dafi          #+#    #+#             */
+/*   Updated: 2022/04/06 13:50:29 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_strlen(char *s)
+void	ft_dup2(int f1, int f2)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
+	dup2(f1, 0);
+	dup2(f2, 1);
 }
 
-void	*ft_calloc(size_t count, size_t size)
+int	nocommand(void)
 {
-	void	*b;
-	int		i;
-
-	i = count * size;
-	b = malloc(i);
-	if (b == 0)
-		return (0);
-	while (i)
-		((char *)b)[--i] = 0;
-	return (b);
+	write(2, "Command not found\n", 19);
+	exit(0);
 }
 
 char	*what_valid(char **all, char *command)
@@ -54,26 +42,28 @@ char	*what_valid(char **all, char *command)
 	return (NULL);
 }
 
-size_t	ft_strlcpy(char *dest, char *src, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	if (size != 0)
-	{
-		while (i < size - 1 && src[i] != '\0')
-		{
-			dest[i] = src[i];
-			i++;
-		}
-		dest[i] = '\0';
-	}
-	return (ft_strlen(src));
-}
-
 void	ft_close(int a, int b, int c)
 {
 	a > 0 && close(a);
 	close(b);
 	close(c);
+}
+
+char	*get_path(char	*s, char **envp)
+{
+	char	*d;
+	char	**wt;
+	if (!envp)
+		exit(write(2, "Error: no env\n", 15));
+	while (*envp)
+	{
+		if (ft_strnstr(*envp, "PATH=", 5))
+			break ;
+		envp++;
+	}
+	if (!envp)
+		exit(write(2, "Error: what ?\n", 15));
+	wt = ft_split(*envp, ':');
+	d = what_valid(wt, s);
+	return (d);
 }
