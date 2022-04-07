@@ -7,10 +7,10 @@ B_NAME = bonus/pipex
 CFLAGS = -Wall -Werror -Wextra
 
 SRCS = pipex.c pipex_check.c basic_functions.c ft_split.c\
-		GNL/get_next_line.c GNL/get_next_line_utils.c
+		GNL/get_next_line.c GNL/get_next_line_utils.c multi_pipes.c
 
-B_SRCS = bonus/multi_pipes_bonus.c bonus/GNL/get_next_line.c bonus/GNL/get_next_line_utils.c\
-		bonus/pipex_check.c bonus/basic_functions.c bonus/ft_split.c bonus/pipex_bonus.c
+B_SRCS = multi_pipes.c GNL/get_next_line.c GNL/get_next_line_utils.c\
+		pipex_check.c basic_functions.c ft_split.c bonus/pipex_bonus.c
 
 OBJS = ${SRCS:.c=.o}
 

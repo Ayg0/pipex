@@ -6,7 +6,7 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/14 18:24:15 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/05 16:06:18 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/07 11:27:31 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,10 @@ char	*ft_strjoin2(char *s1, char *s2, int flag);
 int		ft_strlen(char *s);
 void	ft_dup2(int f1, int f2);
 int		nocommand(void);
-void	dealwithit(char **av, char **envp, int flag, int *p);
 void	ft_init(int ac, t_data *data, int mode);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 void	ft_error(int ac, t_data *data, int errnum, char *error);
 void	switch_in_out(int ac, int i, t_data *data, char **av);
-int		mandatory(int ac, char **av, char **envp);
 void	multiprocessing(t_data *data, int ac, char **av, char **envp);
-void	run_command(char **av, char **envp, int *pipe2, int *p);
 void	free_it(t_data *data, int ac);
 #endif

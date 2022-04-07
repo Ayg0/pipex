@@ -6,40 +6,11 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 13:15:26 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/06 11:25:54 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/07 11:29:19 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	run_command(char **av, char **envp, int *pipe2, int *p)
-{
-	char	*excutable;
-	char	**parts;
-	int		fd;
-
-	if (pipe2[0])
-	{
-		ft_dup2(pipe2[0], p[1]);
-		ft_close(pipe2[1], p[1], p[0]);
-		parts = ft_split(av[3], ' ');
-		excutable = get_path(parts[0], envp);
-		if (!excutable)
-			nocommand();
-		execve(excutable, parts, envp);
-	}
-	else
-	{
-		parts = ft_split(av[4], ' ');
-		excutable = get_path(parts[0], envp);
-		if (!excutable)
-			nocommand();
-		fd = open(av[5], 1 | O_CREAT | O_TRUNC, 0644);
-		ft_dup2(p[0], fd);
-		ft_close(fd, p[0], p[1]);
-		execve(excutable, parts, envp);
-	}
-}
 
 void	multiprocessing(t_data *data, int ac, char **av, char **envp)
 {

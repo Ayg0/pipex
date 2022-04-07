@@ -6,21 +6,11 @@
 /*   By: ted-dafi <ted-dafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/30 09:59:54 by ted-dafi          #+#    #+#             */
-/*   Updated: 2022/04/05 14:52:30 by ted-dafi         ###   ########.fr       */
+/*   Updated: 2022/04/07 11:40:11 by ted-dafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-void	free_it(t_data *data, int ac)
-{
-	int	i;
-
-	i = 0;
-	while (i < ac - 2)
-		free(data->pipes[i++]);
-	free(data->pipes);
-}
+#include "../pipex.h"
 
 int	ft_strcmp(char *s1, char *s2)
 {
@@ -65,15 +55,28 @@ int	using_here_doc(int ac, char **av, char **envp)
 	return (0);
 }
 
+void	free_it(t_data *data, int ac)
+{
+	int	i;
+
+	i = 0;
+	while (i < ac - 2)
+		free(data->pipes[i++]);
+	free(data->pipes);
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_data	all_data;
 
 	if (ac < 5)
-		exit(77);
+		return (write(2, "too few arguments\n", 19));
 	ft_init(ac, &all_data, O_TRUNC);
-	if (!ft_strcmp("here_doc", av[1]))
+	if (!ft_strcmp("here_doc", av[1]) && ac == 6)
 		using_here_doc(ac, av, envp);
+	else if (!ft_strcmp("here_doc", av[1]))
+		return (write(2,
+				"usage: ./pipex here_doc LIMITER command1 command2 file\n", 56));
 	else
 		multiprocessing(&all_data, ac, av, envp);
 	return (0);
